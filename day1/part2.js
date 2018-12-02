@@ -11,9 +11,9 @@ let result = 0;
 
 const computeResult = line => {
   if (line.indexOf("-", 0)) {
-    result += parseInt(line.substring(1, line.length));
-  } else if (line.indexOf("+", 0)) {
     result -= parseInt(line.substring(1, line.length));
+  } else if (line.indexOf("+", 0)) {
+    result += parseInt(line.substring(1, line.length));
   }
 
   if (set.has(result)) {
