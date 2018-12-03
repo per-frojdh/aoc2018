@@ -9,22 +9,24 @@ const array = Array.from({ length: 1000 }, () =>
   Array.from({ length: 1000 }, () => ".")
 );
 
+const coordinateRe = /(\d*,\d*)/;
+const idRe = /[^#](\d*)/;
+const sizeRe = /(\d*x\d*)/;
+
 const claims = [];
 
 // example: #1287 @ 152,94: 10x27
 const parseLine = line => {
-  const value = line.substring(line.indexOf("#") + 1, line.indexOf("@") - 1);
-  const x = line.substring(line.indexOf("@") + 2, line.indexOf(","));
-  const y = line.substring(line.indexOf(",") + 1, line.indexOf(":"));
+  const id = line.match(idRe)[0];
+  const [x, y] = line.match(coordinateRe)[0].split(",");
+  const [width, height] = line.match(sizeRe)[0].split("x");
 
-  const width = line.substring(line.indexOf(":") + 2, line.indexOf("x"));
-  const height = line.substring(line.indexOf("x") + 1);
   return {
     x: parseInt(x),
     y: parseInt(y),
     width: parseInt(width),
     height: parseInt(height),
-    value: parseInt(value)
+    id: parseInt(id)
   };
 };
 
@@ -38,7 +40,7 @@ const placeFabric = fabric => {
       const isNotOverlapped = currentPos !== "X" && currentPos !== ".";
       if (isUntouched) {
         // Position has never been touched
-        array[fabric.x + x][fabric.y + y] = fabric.value;
+        array[fabric.x + x][fabric.y + y] = fabric.id;
         continue;
       }
 
@@ -62,7 +64,7 @@ const findUntouchedClaim = () => {
     for (let x = 0; x < claim.width; x++) {
       for (let y = 0; y < claim.height; y++) {
         const currentPos = array[claim.x + x][claim.y + y];
-        if (currentPos !== claim.value) {
+        if (currentPos !== claim.id) {
           untouchedClaim = false;
         }
       }
@@ -70,7 +72,7 @@ const findUntouchedClaim = () => {
 
     if (untouchedClaim) {
       // There's the result
-      console.log(claim.value);
+      console.log(claim.id);
     }
   });
 };
@@ -82,6 +84,5 @@ lineReader.on("line", line => {
 });
 
 lineReader.on("close", () => {
-  console.log(overlappingSize);
   findUntouchedClaim();
 });
