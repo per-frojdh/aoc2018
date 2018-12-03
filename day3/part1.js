@@ -9,17 +9,14 @@ const array = Array.from({ length: 1000 }, () =>
   Array.from({ length: 1000 }, () => ".")
 );
 
-const coordinateRe = /(\d*,\d*)/;
-const idRe = /[^#](\d*)/;
-const sizeRe = /(\d*x\d*)/;
-
+const lineRe = /([^#]?\d+)\D*(\d*,\d*)\D*(\d*x\d*)/;
 let overlappingSize = 0;
 
 // example: #1287 @ 152,94: 10x27
 const parseLine = line => {
-  const id = line.match(idRe)[0];
-  const [x, y] = line.match(coordinateRe)[0].split(",");
-  const [width, height] = line.match(sizeRe)[0].split("x");
+  const [_, id, coordinates, size] = line.match(lineRe);
+  const [x, y] = coordinates.split(",");
+  const [width, height] = size.split("x");
 
   return {
     x: parseInt(x),
